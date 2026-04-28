@@ -26,6 +26,7 @@ namespace SAOD22
             dataGridView1.Rows[4].Cells[1].Value = "Поглощение";
 
             dataGridView1.Rows[0].Cells[0].Value = true;
+            dataGridView1.Rows[1].Cells[0].Value = true;
         }
 
         bool IsSorted(int[] a)
@@ -137,6 +138,179 @@ namespace SAOD22
             }
         }
 
+        private int[] OnePhaseMergeSort(int[] a, ref int comparisons, ref int assignments)
+        {
+            int n = a.Length;
+
+            if (n <= 1)
+                return a;
+
+            int[] b = new int[n];
+            int[] c = new int[n];
+            int[] d = new int[n];
+            int[] e = new int[n];
+
+            int bLen, cLen, dLen, eLen;
+
+            int seriesLength = 1;
+
+            // Первичное распределение A -> B и C
+            SplitToArrays(a, n, seriesLength, b, out bLen, c, out cLen, ref assignments);
+
+            while (seriesLength < n)
+            {
+                // B + C -> D и E
+                MergePassToTwoArrays(
+                    b, bLen,
+                    c, cLen,
+                    d, out dLen,
+                    e, out eLen,
+                    seriesLength,
+                    ref comparisons,
+                    ref assignments);
+
+                seriesLength *= 2;
+
+                if (dLen == n)
+                {
+                    int[] result = new int[n];
+                    Array.Copy(d, result, n);
+                    return result;
+                }
+
+                // D + E -> B и C
+                MergePassToTwoArrays(
+                    d, dLen,
+                    e, eLen,
+                    b, out bLen,
+                    c, out cLen,
+                    seriesLength,
+                    ref comparisons,
+                    ref assignments);
+
+                seriesLength *= 2;
+
+                if (bLen == n)
+                {
+                    int[] result = new int[n];
+                    Array.Copy(b, result, n);
+                    return result;
+                }
+            }
+
+            return a;
+        }
+
+        private void SplitToArrays( int[] source, int sourceLength, int seriesLength, int[] b, out int bLen, int[] c, out int cLen, ref int assignments)
+        {
+            bLen = 0;
+            cLen = 0;
+
+            int seriesIndex = 0;
+
+            for (int i = 0; i < sourceLength; i += seriesLength)
+            {
+                int count = Math.Min(seriesLength, sourceLength - i);
+
+                if (seriesIndex % 2 == 0)
+                {
+                    for (int j = 0; j < count; j++)
+                    {
+                        b[bLen++] = source[i + j];
+                        assignments++;
+                    }
+                }
+                else
+                {
+                    for (int j = 0; j < count; j++)
+                    {
+                        c[cLen++] = source[i + j];
+                        assignments++;
+                    }
+                }
+
+                seriesIndex++;
+            }
+        }
+
+        private void MergePassToTwoArrays(int[] first, int firstLen, int[] second, int secondLen, int[] result1, out int result1Len, int[] result2, out int result2Len, int seriesLength, ref int comparisons, ref int assignments)
+        {
+            result1Len = 0;
+            result2Len = 0;
+
+            int i = 0;
+            int j = 0;
+            int seriesIndex = 0;
+
+            while (i < firstLen || j < secondLen)
+            {
+                int firstEnd = Math.Min(i + seriesLength, firstLen);
+                int secondEnd = Math.Min(j + seriesLength, secondLen);
+
+                if (seriesIndex % 2 == 0)
+                {
+                    MergeToArray(
+                        ref i,
+                        ref j,
+                        firstEnd,
+                        secondEnd,
+                        first,
+                        second,
+                        result1,
+                        ref result1Len,
+                        ref comparisons,
+                        ref assignments);
+                }
+                else
+                {
+                    MergeToArray(
+                        ref i,
+                        ref j,
+                        firstEnd,
+                        secondEnd,
+                        first,
+                        second,
+                        result2,
+                        ref result2Len,
+                        ref comparisons,
+                        ref assignments);
+                }
+
+                seriesIndex++;
+            }
+        }
+
+        private void MergeToArray(ref int i, ref int j, int firstEnd, int secondEnd, int[] first, int[] second, int[] result, ref int resultIndex, ref int comparisons, ref int assignments)
+        {
+            while (i < firstEnd && j < secondEnd)
+            {
+                comparisons++;
+
+                if (first[i] < second[j])
+                {
+                    result[resultIndex++] = first[i++];
+                    assignments++;
+                }
+                else
+                {
+                    result[resultIndex++] = second[j++];
+                    assignments++;
+                }
+            }
+
+            while (i < firstEnd)
+            {
+                result[resultIndex++] = first[i++];
+                assignments++;
+            }
+
+            while (j < secondEnd)
+            {
+                result[resultIndex++] = second[j++];
+                assignments++;
+            }
+        }
+
         private void button2_Click(object sender, EventArgs e)
         {
             Close();
@@ -176,7 +350,28 @@ namespace SAOD22
                 dataGridView1.Rows[0].Cells[5].Value = "";
             }
 
-            
+            if (Convert.ToBoolean(dataGridView1.Rows[1].Cells[0].Value))
+            {
+                int[] sortingArray = (int[])source.Clone();
+                comparisons = 0;
+                assignments = 0;
+
+                int t1 = Environment.TickCount;
+                sortingArray = OnePhaseMergeSort(sortingArray, ref comparisons, ref assignments);
+                int time = Environment.TickCount - t1;
+
+                dataGridView1.Rows[1].Cells[2].Value = comparisons;
+                dataGridView1.Rows[1].Cells[3].Value = assignments;
+                dataGridView1.Rows[1].Cells[4].Value = time;
+                dataGridView1.Rows[1].Cells[5].Value = IsSorted(sortingArray) ? "Да" : "Нет";
+            }
+            else
+            {
+                dataGridView1.Rows[1].Cells[2].Value = "";
+                dataGridView1.Rows[1].Cells[3].Value = "";
+                dataGridView1.Rows[1].Cells[4].Value = "";
+                dataGridView1.Rows[1].Cells[5].Value = "";
+            }
         }
     }
 }

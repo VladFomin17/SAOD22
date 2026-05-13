@@ -27,6 +27,7 @@ namespace SAOD22
 
             dataGridView1.Rows[0].Cells[0].Value = true;
             dataGridView1.Rows[1].Cells[0].Value = true;
+            dataGridView1.Rows[2].Cells[0].Value = true;
         }
 
         bool IsSorted(int[] a)
@@ -142,9 +143,6 @@ namespace SAOD22
         {
             int n = a.Length;
 
-            if (n <= 1)
-                return a;
-
             int[] b = new int[n];
             int[] c = new int[n];
             int[] d = new int[n];
@@ -154,7 +152,6 @@ namespace SAOD22
 
             int seriesLength = 1;
 
-            // Первичное распределение A -> B и C
             SplitToArrays(a, n, seriesLength, b, out bLen, c, out cLen, ref assignments);
 
             while (seriesLength < n)
@@ -173,9 +170,7 @@ namespace SAOD22
 
                 if (dLen == n)
                 {
-                    int[] result = new int[n];
-                    Array.Copy(d, result, n);
-                    return result;
+                    return d;
                 }
 
                 // D + E -> B и C
@@ -192,9 +187,7 @@ namespace SAOD22
 
                 if (bLen == n)
                 {
-                    int[] result = new int[n];
-                    Array.Copy(b, result, n);
-                    return result;
+                    return b;
                 }
             }
 
@@ -311,6 +304,159 @@ namespace SAOD22
             }
         }
 
+        private int[] NaturalTwoPhaseMergeSort(int[] a, ref int comparisons, ref int assignments)
+        {
+            int n = a.Length;
+
+            if (n <= 1)
+                return a;
+
+            int[] b = new int[n];
+            int[] c = new int[n];
+
+            int bLen, cLen;
+            int seriesCount;
+
+            while (true)
+            {
+                // A -> B и C по естественным сериям
+                SplitNaturalSeries(
+                    a,
+                    b,
+                    out bLen,
+                    c,
+                    out cLen,
+                    out seriesCount,
+                    ref assignments);
+
+                // Если в A осталась одна серия — массив уже отсортирован
+                if (seriesCount == 1)
+                    return a;
+
+                // B + C -> A
+                MergeNaturalSeries(
+                    b,
+                    bLen,
+                    c,
+                    cLen,
+                    a,
+                    ref comparisons,
+                    ref assignments);
+            }
+        }
+
+        private void SplitNaturalSeries(int[] a, int[] b, out int bLen, int[] c, out int cLen, out int seriesCount, ref int assignments)
+        {
+            bLen = 0;
+            cLen = 0;
+            seriesCount = 0;
+
+            int i = 0;
+
+            while (i < a.Length)
+            {
+                bool writeToB = seriesCount % 2 == 0;
+
+                while (true)
+                {
+                    if (writeToB)
+                        b[bLen++] = a[i];
+                    else
+                        c[cLen++] = a[i];
+
+                    assignments++;
+
+                    i++;
+
+                    if (i >= a.Length)
+                        break;
+
+                    if (a[i] < a[i - 1])
+                        break;
+                }
+
+                seriesCount++;
+            }
+        }
+
+        private void MergeNaturalSeries(int[] b, int bLen, int[] c, int cLen, int[] a, ref int comparisons, ref int assignments)
+        {
+            int i = 0;
+            int j = 0;
+            int aIndex = 0;
+
+            while (i < bLen && j < cLen)
+            {
+                int bEnd = GetNaturalSeriesEnd(b, i, bLen);
+                int cEnd = GetNaturalSeriesEnd(c, j, cLen);
+
+                MergeNaturalRuns(
+                    b,
+                    ref i,
+                    bEnd,
+                    c,
+                    ref j,
+                    cEnd,
+                    a,
+                    ref aIndex,
+                    ref comparisons,
+                    ref assignments);
+            }
+
+            while (i < bLen)
+            {
+                a[aIndex++] = b[i++];
+                assignments++;
+            }
+
+            while (j < cLen)
+            {
+                a[aIndex++] = c[j++];
+                assignments++;
+            }
+        }
+
+        private int GetNaturalSeriesEnd(int[] array, int start, int length)
+        {
+            int i = start + 1;
+
+            while (i < length && array[i] >= array[i - 1])
+                i++;
+
+            return i;
+        }
+
+        private void MergeNaturalRuns(int[] b, ref int i, int bEnd, int[] c, ref int j, int cEnd, int[] a, ref int aIndex, ref int comparisons, ref int assignments)
+        {
+            while (i < bEnd && j < cEnd)
+            {
+                comparisons++;
+
+                if (b[i] <= c[j])
+                {
+                    a[aIndex++] = b[i++];
+                    assignments++;
+                }
+                else
+                {
+                    a[aIndex++] = c[j++];
+                    assignments++;
+                }
+            }
+
+            while (i < bEnd)
+            {
+                a[aIndex++] = b[i++];
+                assignments++;
+            }
+
+            while (j < cEnd)
+            {
+                a[aIndex++] = c[j++];
+                assignments++;
+            }
+        }
+
         private void button2_Click(object sender, EventArgs e)
         {
             Close();
@@ -371,6 +517,29 @@ namespace SAOD22
                 dataGridView1.Rows[1].Cells[3].Value = "";
                 dataGridView1.Rows[1].Cells[4].Value = "";
                 dataGridView1.Rows[1].Cells[5].Value = "";
+            }
+
+            if (Convert.ToBoolean(dataGridView1.Rows[2].Cells[0].Value))
+            {
+                int[] sortingArray = (int[])source.Clone();
+                comparisons = 0;
+                assignments = 0;
+
+                int t1 = Environment.TickCount;
+                sortingArray = NaturalTwoPhaseMergeSort(sortingArray, ref comparisons, ref assignments);
+                int time = Environment.TickCount - t1;
+
+                dataGridView1.Rows[2].Cells[2].Value = comparisons;
+                dataGridView1.Rows[2].Cells[3].Value = assignments;
+                dataGridView1.Rows[2].Cells[4].Value = time;
+                dataGridView1.Rows[2].Cells[5].Value = IsSorted(sortingArray) ? "Да" : "Нет";
+            }
+            else
+            {
+                dataGridView1.Rows[2].Cells[2].Value = "";
+                dataGridView1.Rows[2].Cells[3].Value = "";
+                dataGridView1.Rows[2].Cells[4].Value = "";
+                dataGridView1.Rows[2].Cells[5].Value = "";
             }
         }
     }

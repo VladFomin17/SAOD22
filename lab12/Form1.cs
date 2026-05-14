@@ -28,6 +28,7 @@ namespace SAOD22
             dataGridView1.Rows[0].Cells[0].Value = true;
             dataGridView1.Rows[1].Cells[0].Value = true;
             dataGridView1.Rows[2].Cells[0].Value = true;
+            dataGridView1.Rows[3].Cells[0].Value = true;
         }
 
         bool IsSorted(int[] a)
@@ -319,7 +320,6 @@ namespace SAOD22
 
             while (true)
             {
-                // A -> B и C по естественным сериям
                 SplitNaturalSeries(
                     a,
                     b,
@@ -329,11 +329,9 @@ namespace SAOD22
                     out seriesCount,
                     ref assignments);
 
-                // Если в A осталась одна серия — массив уже отсортирован
                 if (seriesCount == 1)
                     return a;
 
-                // B + C -> A
                 MergeNaturalSeries(
                     b,
                     bLen,
@@ -457,6 +455,301 @@ namespace SAOD22
             }
         }
 
+        private int[] OnePhaseNaturalMergeSort(int[] a, ref int comparisons, ref int assignments)
+        {
+            int[] b = new int[a.Length];
+            int[] c = new int[a.Length];
+
+            int bLength = 0, cLength = 0;
+            int aIndex = 0;
+            int toB = 0;
+
+            while (aIndex < a.Length)
+            {
+                int start = aIndex;
+
+                while (aIndex + 1 < a.Length && a[aIndex] <= a[aIndex + 1])
+                {
+                    comparisons++;
+                    aIndex++;
+                }
+
+                if (aIndex + 1 < a.Length)
+                    comparisons++;
+
+                if (toB % 2 == 0)
+                {
+                    for (int j = start; j <= aIndex; j++)
+                    {
+                        b[bLength++] = a[j];
+                        assignments++;
+                    }
+                }
+                else
+                {
+                    for (int j = start; j <= aIndex; j++)
+                    {
+                        c[cLength++] = a[j];
+                        assignments++;
+                    }
+                }
+
+                aIndex++;
+                toB++;
+            }
+
+            if (cLength == 0)
+                return a;
+
+            int[] d = new int[a.Length];
+            int[] e = new int[a.Length];
+
+            int dLength = 0, eLength = 0;
+            int series = 0;
+
+            while (true)
+            {
+                if (series % 2 == 0)
+                {
+                    int bInd = 0, cInd = 0;
+                    int deFlag = 0;
+
+                    dLength = 0;
+                    eLength = 0;
+
+                    while (bInd < bLength && cInd < cLength)
+                    {
+                        int bSeriesStart = bInd;
+                        int bSeriesEnd = bSeriesStart;
+
+                        while (bSeriesEnd + 1 < bLength && b[bSeriesEnd] <= b[bSeriesEnd + 1])
+                        {
+                            comparisons++;
+                            bSeriesEnd++;
+                        }
+
+                        if (bSeriesEnd + 1 < bLength)
+                            comparisons++;
+
+                        int cSeriesStart = cInd;
+                        int cSeriesEnd = cSeriesStart;
+
+                        while (cSeriesEnd + 1 < cLength && c[cSeriesEnd] <= c[cSeriesEnd + 1])
+                        {
+                            comparisons++;
+                            cSeriesEnd++;
+                        }
+
+                        if (cSeriesEnd + 1 < cLength)
+                            comparisons++;
+
+                        int i = bSeriesStart;
+                        int j = cSeriesStart;
+
+                        if (deFlag % 2 == 0)
+                        {
+                            while (i <= bSeriesEnd && j <= cSeriesEnd)
+                            {
+                                comparisons++;
+
+                                if (b[i] <= c[j])
+                                    d[dLength++] = b[i++];
+                                else
+                                    d[dLength++] = c[j++];
+
+                                assignments++;
+                            }
+
+                            while (i <= bSeriesEnd)
+                            {
+                                d[dLength++] = b[i++];
+                                assignments++;
+                            }
+
+                            while (j <= cSeriesEnd)
+                            {
+                                d[dLength++] = c[j++];
+                                assignments++;
+                            }
+                        }
+                        else
+                        {
+                            while (i <= bSeriesEnd && j <= cSeriesEnd)
+                            {
+                                comparisons++;
+
+                                if (b[i] <= c[j])
+                                    e[eLength++] = b[i++];
+                                else
+                                    e[eLength++] = c[j++];
+
+                                assignments++;
+                            }
+
+                            while (i <= bSeriesEnd)
+                            {
+                                e[eLength++] = b[i++];
+                                assignments++;
+                            }
+
+                            while (j <= cSeriesEnd)
+                            {
+                                e[eLength++] = c[j++];
+                                assignments++;
+                            }
+                        }
+
+                        bInd = bSeriesEnd + 1;
+                        cInd = cSeriesEnd + 1;
+                        deFlag++;
+                    }
+
+                    while (bInd < bLength)
+                    {
+                        if (deFlag % 2 == 0)
+                            d[dLength++] = b[bInd++];
+                        else
+                            e[eLength++] = b[bInd++];
+
+                        assignments++;
+                    }
+
+                    while (cInd < cLength)
+                    {
+                        if (deFlag % 2 == 0)
+                            d[dLength++] = c[cInd++];
+                        else
+                            e[eLength++] = c[cInd++];
+
+                        assignments++;
+                    }
+
+                    if (eLength == 0)
+                        return d;
+                }
+                else
+                {
+                    int dInd = 0, eInd = 0;
+                    int bcFlag = 0;
+
+                    bLength = 0;
+                    cLength = 0;
+
+                    while (dInd < dLength && eInd < eLength)
+                    {
+                        int dSeriesStart = dInd;
+                        int dSeriesEnd = dSeriesStart;
+
+                        while (dSeriesEnd + 1 < dLength && d[dSeriesEnd] <= d[dSeriesEnd + 1])
+                        {
+                            comparisons++;
+                            dSeriesEnd++;
+                        }
+
+                        if (dSeriesEnd + 1 < dLength)
+                            comparisons++;
+
+                        int eSeriesStart = eInd;
+                        int eSeriesEnd = eSeriesStart;
+
+                        while (eSeriesEnd + 1 < eLength && e[eSeriesEnd] <= e[eSeriesEnd + 1])
+                        {
+                            comparisons++;
+                            eSeriesEnd++;
+                        }
+
+                        if (eSeriesEnd + 1 < eLength)
+                            comparisons++;
+
+                        int i = dSeriesStart;
+                        int j = eSeriesStart;
+
+                        if (bcFlag % 2 == 0)
+                        {
+                            while (i <= dSeriesEnd && j <= eSeriesEnd)
+                            {
+                                comparisons++;
+
+                                if (d[i] <= e[j])
+                                    b[bLength++] = d[i++];
+                                else
+                                    b[bLength++] = e[j++];
+
+                                assignments++;
+                            }
+
+                            while (i <= dSeriesEnd)
+                            {
+                                b[bLength++] = d[i++];
+                                assignments++;
+                            }
+
+                            while (j <= eSeriesEnd)
+                            {
+                                b[bLength++] = e[j++];
+                                assignments++;
+                            }
+                        }
+                        else
+                        {
+                            while (i <= dSeriesEnd && j <= eSeriesEnd)
+                            {
+                                comparisons++;
+
+                                if (d[i] <= e[j])
+                                    c[cLength++] = d[i++];
+                                else
+                                    c[cLength++] = e[j++];
+
+                                assignments++;
+                            }
+
+                            while (i <= dSeriesEnd)
+                            {
+                                c[cLength++] = d[i++];
+                                assignments++;
+                            }
+
+                            while (j <= eSeriesEnd)
+                            {
+                                c[cLength++] = e[j++];
+                                assignments++;
+                            }
+                        }
+
+                        dInd = dSeriesEnd + 1;
+                        eInd = eSeriesEnd + 1;
+                        bcFlag++;
+                    }
+
+                    while (dInd < dLength)
+                    {
+                        if (bcFlag % 2 == 0)
+                            b[bLength++] = d[dInd++];
+                        else
+                            c[cLength++] = d[dInd++];
+
+                        assignments++;
+                    }
+
+                    while (eInd < eLength)
+                    {
+                        if (bcFlag % 2 == 0)
+                            b[bLength++] = e[eInd++];
+                        else
+                            c[cLength++] = e[eInd++];
+
+                        assignments++;
+                    }
+
+                    if (cLength == 0)
+                        return b;
+                }
+
+                series++;
+            }
+        }
+
         private void button2_Click(object sender, EventArgs e)
         {
             Close();
@@ -540,6 +833,29 @@ namespace SAOD22
                 dataGridView1.Rows[2].Cells[3].Value = "";
                 dataGridView1.Rows[2].Cells[4].Value = "";
                 dataGridView1.Rows[2].Cells[5].Value = "";
+            }
+
+            if (Convert.ToBoolean(dataGridView1.Rows[3].Cells[0].Value))
+            {
+                int[] sortingArray = (int[])source.Clone();
+                comparisons = 0;
+                assignments = 0;
+
+                int t1 = Environment.TickCount;
+                sortingArray = OnePhaseNaturalMergeSort(sortingArray, ref comparisons, ref assignments);
+                int time = Environment.TickCount - t1;
+
+                dataGridView1.Rows[3].Cells[2].Value = comparisons;
+                dataGridView1.Rows[3].Cells[3].Value = assignments;
+                dataGridView1.Rows[3].Cells[4].Value = time;
+                dataGridView1.Rows[3].Cells[5].Value = IsSorted(sortingArray) ? "Да" : "Нет";
+            }
+            else
+            {
+                dataGridView1.Rows[3].Cells[2].Value = "";
+                dataGridView1.Rows[3].Cells[3].Value = "";
+                dataGridView1.Rows[3].Cells[4].Value = "";
+                dataGridView1.Rows[3].Cells[5].Value = "";
             }
         }
     }

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
-namespace SAOD22
+namespace SIAOD22
 {
     public partial class SortingForm : Form
     {
@@ -29,6 +29,7 @@ namespace SAOD22
             dataGridView1.Rows[1].Cells[0].Value = true;
             dataGridView1.Rows[2].Cells[0].Value = true;
             dataGridView1.Rows[3].Cells[0].Value = true;
+            dataGridView1.Rows[4].Cells[0].Value = true;
         }
 
         bool IsSorted(int[] a)
@@ -750,6 +751,82 @@ namespace SAOD22
             }
         }
 
+        private int[] AbsorptionMergeSort(int[] a, int memoryPercent, ref int comparisons, ref int assignments)
+        {
+            int n = a.Length;
+
+            if (n <= 1)
+                return a;
+
+            int portionSize = (int)Math.Ceiling(n * memoryPercent / 100.0);
+
+            int sortedStart = Math.Max(0, n - portionSize);
+            int[] portion = ReadPortion(a, sortedStart, n - sortedStart, ref assignments);
+            Array.Sort(portion);
+            WritePortion(a, sortedStart, portion, ref assignments);
+
+            while (sortedStart > 0)
+            {
+                int portionEnd = sortedStart;
+                int portionStart = Math.Max(0, portionEnd - portionSize);
+
+                portion = ReadPortion(a, portionStart, portionEnd - portionStart, ref assignments);
+                Array.Sort(portion);
+
+                MergeAbsorbedPortion(a, portionStart, portion, portionEnd, ref comparisons, ref assignments);
+                sortedStart = portionStart;
+            }
+
+            return a;
+        }
+
+        private int[] ReadPortion(int[] source, int start, int count, ref int assignments)
+        {
+            int[] portion = new int[count];
+
+            for (int i = 0; i < count; i++)
+            {
+                portion[i] = source[start + i];
+                assignments++;
+            }
+
+            return portion;
+        }
+
+        private void WritePortion(int[] destination, int start, int[] portion, ref int assignments)
+        {
+            for (int i = 0; i < portion.Length; i++)
+            {
+                destination[start + i] = portion[i];
+                assignments++;
+            }
+        }
+
+        private void MergeAbsorbedPortion(int[] a, int portionStart, int[] portion, int sortedStart, ref int comparisons, ref int assignments)
+        {
+            int portionIndex = 0;
+            int sortedIndex = sortedStart;
+            int writeIndex = portionStart;
+
+            while (portionIndex < portion.Length && sortedIndex < a.Length)
+            {
+                comparisons++;
+
+                if (portion[portionIndex] <= a[sortedIndex])
+                    a[writeIndex++] = portion[portionIndex++];
+                else
+                    a[writeIndex++] = a[sortedIndex++];
+
+                assignments++;
+            }
+
+            while (portionIndex < portion.Length)
+            {
+                a[writeIndex++] = portion[portionIndex++];
+                assignments++;
+            }
+        }
+
         private void button2_Click(object sender, EventArgs e)
         {
             Close();
@@ -856,6 +933,29 @@ namespace SAOD22
                 dataGridView1.Rows[3].Cells[3].Value = "";
                 dataGridView1.Rows[3].Cells[4].Value = "";
                 dataGridView1.Rows[3].Cells[5].Value = "";
+            }
+
+            if (Convert.ToBoolean(dataGridView1.Rows[4].Cells[0].Value))
+            {
+                int[] sortingArray = (int[])source.Clone();
+                comparisons = 0;
+                assignments = 0;
+
+                int t1 = Environment.TickCount;
+                sortingArray = AbsorptionMergeSort(sortingArray, (int)opPercent.Value, ref comparisons, ref assignments);
+                int time = Environment.TickCount - t1;
+
+                dataGridView1.Rows[4].Cells[2].Value = comparisons;
+                dataGridView1.Rows[4].Cells[3].Value = assignments;
+                dataGridView1.Rows[4].Cells[4].Value = time;
+                dataGridView1.Rows[4].Cells[5].Value = IsSorted(sortingArray) ? "Да" : "Нет";
+            }
+            else
+            {
+                dataGridView1.Rows[4].Cells[2].Value = "";
+                dataGridView1.Rows[4].Cells[3].Value = "";
+                dataGridView1.Rows[4].Cells[4].Value = "";
+                dataGridView1.Rows[4].Cells[5].Value = "";
             }
         }
     }

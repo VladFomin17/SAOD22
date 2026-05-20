@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SAOD22.Properties {
+namespace SIAOD22.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace SAOD22.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("lab12.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SIAOD22.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -85,7 +85,7 @@ namespace SAOD22.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap icons8_exit_button_50 {
             get {
-                object obj = ResourceManager.GetObject("icons8-exit-button-50", resourceCulture);
+                object obj = ResourceManager.GetObject("icons8_exit_button_50", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

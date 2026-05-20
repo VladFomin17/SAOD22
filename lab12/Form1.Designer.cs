@@ -1,4 +1,4 @@
-﻿namespace SAOD22
+﻿namespace SIAOD22
 {
     partial class SortingForm
     {
@@ -29,18 +29,18 @@
         private void InitializeComponent()
         {
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.arraySize = new System.Windows.Forms.NumericUpDown();
-            this.label1 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
-            this.opPercent = new System.Windows.Forms.NumericUpDown();
             this.Column4 = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.Column5 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Column3 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.SortedHeader = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.arraySize = new System.Windows.Forms.NumericUpDown();
+            this.label1 = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
+            this.opPercent = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.arraySize)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.opPercent)).BeginInit();
@@ -63,80 +63,6 @@
             this.dataGridView1.ScrollBars = System.Windows.Forms.ScrollBars.None;
             this.dataGridView1.Size = new System.Drawing.Size(1067, 178);
             this.dataGridView1.TabIndex = 0;
-            // 
-            // arraySize
-            // 
-            this.arraySize.Location = new System.Drawing.Point(362, 210);
-            this.arraySize.Margin = new System.Windows.Forms.Padding(4);
-            this.arraySize.Maximum = new decimal(new int[] {
-            1316134912,
-            2328,
-            0,
-            0});
-            this.arraySize.Name = "arraySize";
-            this.arraySize.Size = new System.Drawing.Size(171, 22);
-            this.arraySize.TabIndex = 1;
-            this.arraySize.Value = new decimal(new int[] {
-            1000000,
-            0,
-            0,
-            0});
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(218, 212);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(115, 16);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Размер массива";
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(21, 210);
-            this.button1.Margin = new System.Windows.Forms.Padding(4);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(128, 28);
-            this.button1.TabIndex = 3;
-            this.button1.Text = "Сортировать";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.onSortClick);
-            // 
-            // button2
-            // 
-            this.button2.Image = global::SAOD22.Properties.Resources.icons8_exit_button_50;
-            this.button2.Location = new System.Drawing.Point(1007, 212);
-            this.button2.Margin = new System.Windows.Forms.Padding(4);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(73, 68);
-            this.button2.TabIndex = 4;
-            this.button2.Text = "button2";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(668, 212);
-            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(39, 16);
-            this.label2.TabIndex = 6;
-            this.label2.Text = "%ОП";
-            // 
-            // opPercent
-            // 
-            this.opPercent.Location = new System.Drawing.Point(715, 210);
-            this.opPercent.Margin = new System.Windows.Forms.Padding(4);
-            this.opPercent.Name = "opPercent";
-            this.opPercent.Size = new System.Drawing.Size(171, 22);
-            this.opPercent.TabIndex = 5;
-            this.opPercent.Value = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
             // 
             // Column4
             // 
@@ -180,6 +106,85 @@
             this.SortedHeader.MinimumWidth = 6;
             this.SortedHeader.Name = "SortedHeader";
             this.SortedHeader.Width = 125;
+            // 
+            // arraySize
+            // 
+            this.arraySize.Location = new System.Drawing.Point(362, 210);
+            this.arraySize.Margin = new System.Windows.Forms.Padding(4);
+            this.arraySize.Maximum = new decimal(new int[] {
+            1316134912,
+            2328,
+            0,
+            0});
+            this.arraySize.Name = "arraySize";
+            this.arraySize.Size = new System.Drawing.Size(171, 22);
+            this.arraySize.TabIndex = 1;
+            this.arraySize.Value = new decimal(new int[] {
+            1000000,
+            0,
+            0,
+            0});
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(218, 212);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(115, 16);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "Размер массива";
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(21, 210);
+            this.button1.Margin = new System.Windows.Forms.Padding(4);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(128, 28);
+            this.button1.TabIndex = 3;
+            this.button1.Text = "Сортировать";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.onSortClick);
+            // 
+            // button2
+            // 
+            this.button2.Image = global::SIAOD22.Properties.Resources.icons8_exit_button_50;
+            this.button2.Location = new System.Drawing.Point(1007, 212);
+            this.button2.Margin = new System.Windows.Forms.Padding(4);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(73, 68);
+            this.button2.TabIndex = 4;
+            this.button2.Text = "button2";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(668, 212);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(39, 16);
+            this.label2.TabIndex = 6;
+            this.label2.Text = "%ОП";
+            // 
+            // opPercent
+            // 
+            this.opPercent.Location = new System.Drawing.Point(715, 210);
+            this.opPercent.Margin = new System.Windows.Forms.Padding(4);
+            this.opPercent.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.opPercent.Name = "opPercent";
+            this.opPercent.Size = new System.Drawing.Size(171, 22);
+            this.opPercent.TabIndex = 5;
+            this.opPercent.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
             // 
             // SortingForm
             // 

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace SAOD22.Properties
+namespace SIAOD22.Properties
 {
 
 
